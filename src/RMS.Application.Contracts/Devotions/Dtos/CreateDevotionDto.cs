@@ -11,4 +11,5 @@ public class CreateDevotionDto : EntityDto<Guid>
     public string? Title { get; set; }
     public string? Notes { get; set; }
     public List<CreateBibleBookDto> BibleBooks { get; set; }
+    public DevotionType Type { get; set; }
 }

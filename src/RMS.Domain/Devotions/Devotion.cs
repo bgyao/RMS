@@ -16,6 +16,7 @@ public class Devotion : FullAuditedAggregateRoot<Guid>, IMultiTenant
     public virtual string? Title { get; protected set; }
     public virtual string? Notes { get; protected set; }
     public virtual ICollection<BibleBook> BibleBooks { get; protected set; }
+    public virtual DevotionType Type { get; protected set; }
 
     protected Devotion()
     {

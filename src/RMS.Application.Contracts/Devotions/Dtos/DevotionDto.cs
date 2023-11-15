@@ -11,4 +11,5 @@ public class DevotionDto : ExtensibleAuditedEntityDto<Guid>
     public string? Title { get; set; }
     public string? Notes { get; set; }
     public List<BibleBookDto> BibleBooks { get; set; }
+    public DevotionType Type { get; set; }
 }

@@ -25,7 +25,7 @@ public class DevotionAutoMapperProfile : Profile
         #region BibleBooks
         CreateMap<BibleBook, BibleBookDto>().ReverseMap();
         CreateMap<CreateBibleBookDto, BibleBook>();
-        CreateMap<UpdateBibleBookDto, BibleBook>();
+        CreateMap<UpdateBibleBookDto, BibleBook>().ReverseMap();
         #endregion
 
         #region Verses

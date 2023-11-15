@@ -100,9 +100,9 @@ public class RMSDbContext :
         {
             b.ToTable(RMSConsts.DbTablePrefix + "Devotions" + RMSConsts.DbSchema);
             b.ConfigureByConvention();
+
             //Devotion:
             //HasMany Bible Verses With One Devotion
-
             b.HasMany(x => x.BibleBooks).WithOne().HasForeignKey(x => x.DevotionId).IsRequired();
         });
     }
@@ -118,7 +118,6 @@ public class RMSDbContext :
 
             //A Devotion should have unique BibleBooks (i.e., Matthew 1:1 should not be repeated)
             //HasOne Devotion WithMany BibleBooks
-            b.HasIndex(x => new { x.DevotionId }).IsUnique();
             b.HasOne<Devotion>().WithMany(x => x.BibleBooks).HasForeignKey(x => x.DevotionId);
 
             //HasMany Verses WithOne BibleBook
@@ -136,7 +135,6 @@ public class RMSDbContext :
             //Each Verse is unique, i.e., BibleBook Matthew 1 has only one VerseNumber = 1.
             //HasOne BibleBook WithMany Verses
             b.Property(x => x.Id).ValueGeneratedOnAdd();
-            b.HasIndex(x => new { x.BibleBookId }).IsUnique();
             b.HasOne<BibleBook>().WithMany(x => x.Verses).HasForeignKey(x => x.BibleBookId);
         });
     }

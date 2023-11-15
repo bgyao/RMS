@@ -5,7 +5,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace RMS.BibleBooks.Dtos;
 
-public class BibleBookDto : EntityDto<Guid>
+public class BibleBookDto : ExtensibleAuditedEntityDto<Guid>
 {
     public Guid DevotionId { get; set; }
     public BookName BookName { get; set; }
