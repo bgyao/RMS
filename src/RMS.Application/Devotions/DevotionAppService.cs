@@ -27,12 +27,13 @@ public class DevotionAppService :
     public IRepository<Verse> _verseRepository;
 
     public DevotionAppService(
-        IRepository<Devotion, Guid> repository,
-        IRepository<BibleBook, Guid> bibleBookRepository,
-        IRepository<Verse, Guid> verseRepository) : base(repository)
+        IRepository<Devotion, Guid> repository//,
+        //IRepository<BibleBook, Guid> bibleBookRepository,
+        //IRepository<Verse, Guid> verseRepository
+        ) : base(repository)
     {
-        _bibleBookRepository = bibleBookRepository;
-        _verseRepository = verseRepository;
+        //_bibleBookRepository = bibleBookRepository;
+        //_verseRepository = verseRepository;
     }
 
     protected override async Task<DevotionDto> MapToGetOutputDtoAsync(Devotion entity)
@@ -92,55 +93,36 @@ public class DevotionAppService :
         }
     }
 
-    //NOTE: Using UpdateAsync.
-    //      ids of devotionId, bibleBookId, and verseId should be present
     //NOTE: Deleting Bible Books and Verses
     //      - lagay dito yung delete method ng BibleBooks tsaka Verses. Check ProductMediaFiles kung paano
     //          binubura sa UpdateAsync method
 
-    //public override async Task<DevotionDto> UpdateAsync(Guid devotionId, UpdateDevotionDto input)
-    //{
-    //    try
-    //    {
-    //        await CheckUpdatePolicyAsync();
-    //        var query = await ReadOnlyRepository.GetQueryableAsync();
-    //        var result = query.IgnoreQueryFilters().FirstOrDefault(x => x.Id == devotionId);
+    public override async Task<DevotionDto> UpdateAsync(Guid devotionId, UpdateDevotionDto input)
+    {
 
-    //        ObjectMapper.Map(input, result);
+        //  HOW THIS WORKS: IDs of BibleBooks and Verses are REQUIRED to update them.
+        //  newly added BibleBooks and Verses have no IDs. just add them to the frontend List<>.
 
-    //        await CurrentUnitOfWork.SaveChangesAsync();
+        try
+        {
+            await CheckUpdatePolicyAsync();
+            var query = await ReadOnlyRepository.GetQueryableAsync();
+            var result = query.IgnoreQueryFilters().FirstOrDefault(x => x.Id == devotionId);
 
-    //        //foreach(var bibleBook in input.BibleBooks)
-    //        //{
-    //        //    bibleBook.DevotionId = devotionId;
+            ObjectMapper.Map(input, result);
 
-    //        //    var bibleBookQuery = query.IgnoreQueryFilters()
-    //        //        .FirstOrDefault(c => c.Id == bibleBook.Id);
-    //        //}
+            await CurrentUnitOfWork.SaveChangesAsync();
 
-    //        return await MapToGetOutputDtoAsync(result);
+            return await MapToGetOutputDtoAsync(result);
+         
+        }
+        catch (Exception ex)
+        {
+            string innerException = string.Empty;
+            if (ex.InnerException != null)
+                innerException = $"\nInnerException:{ex.InnerException.Message}";
 
-    //        //        Note: Ang default ng UpdateAsync is to add lang ng add ng BibleBooks and Verses sa list.
-    //        //        TODO: Dapat yung mga BibleBooks and Verses na binura ni user, magreflect as deleted.
-    //        //              Yung mga bagong dagdag, pasok lang.
-    //        //          Flow:
-    //        //                  - user edits the Devotion
-    //        //                  - Save
-    //        //                  - Expected payload should have:
-    //        //                      * edited Devotions
-    //        //                      * edited Verses
-    //        //                      * edited BibleBooks
-    //        //                      * added BibleBooks+Verses
-    //        //
-    //        //          
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        string innerException = string.Empty;
-    //        if (ex.InnerException != null)
-    //            innerException = $"\nInnerException:{ex.InnerException.Message}";
-
-    //        throw new UserFriendlyException($"{ex.Message}{innerException}");
-    //    }
-    //}
+            throw new UserFriendlyException($"{ex.Message}{innerException}");
+        }
+    }
 }

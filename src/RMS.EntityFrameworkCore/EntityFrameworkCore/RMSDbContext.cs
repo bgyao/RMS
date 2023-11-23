@@ -30,6 +30,7 @@ public class RMSDbContext :
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Devotion> Devotions { get; set; }
     public DbSet<BibleBook> BibleBooks { get; set; }
+    public DbSet<Verse> Verses { get; set; }
 
     #region Entities from the modules
 

@@ -11,7 +11,6 @@ namespace RMS.Devotions;
 public interface IDevotionAppService : ICrudAppService<DevotionDto, Guid, PagedAndSortedResultRequestDto,CreateDevotionDto,UpdateDevotionDto>
 {
     Task<List<DevotionDto>> GetDevotionsByCreatorId(Guid creatorId);
-    //TODO: override for UpdateAsync(Guid devotionId), check AppService
-    //Task<DevotionDto> UpdateAsync(Guid devotionId);
+    new Task<DevotionDto> UpdateAsync(Guid devotionId, UpdateDevotionDto input);
     
 }
