@@ -1,9 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RMS.BibleBooks;
+using RMS.Devotions;
+using RMS.Verses;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -24,6 +28,9 @@ public class RMSDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<Devotion> Devotions { get; set; }
+    public DbSet<BibleBook> BibleBooks { get; set; }
+    public DbSet<Verse> Verses { get; set; }
 
     #region Entities from the modules
 
@@ -76,11 +83,60 @@ public class RMSDbContext :
 
         /* Configure your own tables/entities inside here */
 
-        //builder.Entity<YourEntity>(b =>
+        //builder.Entity<Devotions>(b =>
         //{
         //    b.ToTable(RMSConsts.DbTablePrefix + "YourEntities", RMSConsts.DbSchema);
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        ConfigureDevotions(builder);
+        ConfigureBibleBooks(builder);
+        ConfigureVerses(builder);
+    }
+
+    private void ConfigureDevotions(ModelBuilder builder)
+    {
+        builder.Entity<Devotion>(b =>
+        {
+            b.ToTable(RMSConsts.DbTablePrefix + "Devotions" + RMSConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            //Devotion:
+            //HasMany Bible Verses With One Devotion
+            b.HasMany(x => x.BibleBooks).WithOne().HasForeignKey(x => x.DevotionId).IsRequired();
+        });
+    }
+
+    private void ConfigureBibleBooks(ModelBuilder builder)
+    {
+        builder.Entity<BibleBook>(b =>
+        {
+            b.ToTable(RMSConsts.DbTablePrefix + "BibleBooks" + RMSConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Id).ValueGeneratedOnAdd();
+
+            //A Devotion should have unique BibleBooks (i.e., Matthew 1:1 should not be repeated)
+            //HasOne Devotion WithMany BibleBooks
+            b.HasOne<Devotion>().WithMany(x => x.BibleBooks).HasForeignKey(x => x.DevotionId);
+
+            //HasMany Verses WithOne BibleBook
+            b.HasMany(c => c.Verses).WithOne().HasForeignKey(x => x.BibleBookId).IsRequired();
+        });
+    }
+
+    private void ConfigureVerses(ModelBuilder builder)
+    {
+        builder.Entity<Verse>(b =>
+        {
+            b.ToTable(RMSConsts.DbTablePrefix + "Verses" + RMSConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            //Each Verse is unique, i.e., BibleBook Matthew 1 has only one VerseNumber = 1.
+            //HasOne BibleBook WithMany Verses
+            b.Property(x => x.Id).ValueGeneratedOnAdd();
+            b.HasOne<BibleBook>().WithMany(x => x.Verses).HasForeignKey(x => x.BibleBookId);
+        });
     }
 }
