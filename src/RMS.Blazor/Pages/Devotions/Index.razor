@@ -1,0 +1,39 @@
+﻿@page "/devotions"
+<div class="container-fluid">
+    <h1>Devotions</h1>
+    <p>Devotions go here.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Bible Verses</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (DevotionsList.IsNullOrEmpty())
+            {
+                <tr>
+                    <td colspan="5">No items found. <a href="/devotions/new">Add new entry</a></td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in DevotionsList)
+                {
+                    <tr>
+                        <td>@item.CreationTime</td>
+                        <td>@item.Title</td>
+                        <td>@item.BibleBooks</td>
+                        <td>@item.Notes</td>
+                        <td><a href="">Edit</a> | <a href="">Delete</a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    
+</div>

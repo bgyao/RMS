@@ -30,7 +30,18 @@ public class RMSMenuContributor : IMenuContributor
                 l["Menu:Home"],
                 "/",
                 icon: "fas fa-home",
-                order: 0
+                order: 1
+            )
+        );
+
+        context.Menu.Items.Insert(
+            1,
+            new ApplicationMenuItem(
+                RMSMenus.Devotions,
+                l["Menu:Devotions"],
+                "/devotions",
+                icon: "fas fa-bible",
+                order: 2
             )
         );
 
